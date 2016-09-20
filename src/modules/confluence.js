@@ -20,15 +20,13 @@ const Confluence = () => {
 
         return fetch(url, options)
             .then(res => res.json())
-            //.then(res => { console.log(res); return res; })
             .then(res => {
-                if(res.size <= 0) {
-                    return `I'm sorry, I didn't find anything related to your search criteria.`;
-                }
-
-                return (`*Here are the most relevant ${res.size} results*\n`).concat(res.results
-                    .map(result => (`${result.title} - ${config.confluence.baseUrl}${result._links.tinyui}`))
-                    .join('\n')) 
+                return res.size <= 0 ? 
+                    `I'm sorry, I didn't find anything related to your search criteria.` :
+                    (`*_Here are the most relevant ${res.size} results_*\n\n`).concat(res.results
+                        .map(result => (`:black_small_square:\t${result.title} - ${config.confluence.baseUrl}${result._links.webui}`))
+                        .join('\n')
+                    );
             });
     };
 
