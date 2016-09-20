@@ -1,5 +1,5 @@
 import { config } from './config';
-import { confluence } from './modules';
+import { confluence, directory } from './modules';
 import {
     RtmClient, MemoryDataStore,
     CLIENT_EVENTS, RTM_EVENTS
@@ -17,12 +17,25 @@ const handleMessage = msg => {
     .replace(/[^0-9a-z ?]/g, '')
     .split(' ');
 
-  if (words.length > 0) {
-    if (words[0] === '?' || words[0] === 'find') {
-      return confluence.search(words.slice(1));
-    }
+  const actionMap = {
+    'find': confluence.search,
+    'tel': directory.search,
+    'telephone': directory.search,
+    'telephonereceiver': directory.search,
+    'phone': directory.search,
+    '?': confluence.search
+  };
+
+  const action = (key, terms) => {
+    const action = actionMap[key];
+    return action ? action(terms) : Promise.reject();
   }
-  return Promise.reject();
+
+  if (words.length > 0) {
+    return action(words[0], words.slice(1));
+  } else {
+    return Promise.reject();
+  }
 };
 
 rtm.on(CLIENT_EVENTS.RTM.AUTHENTICATED, data => {
