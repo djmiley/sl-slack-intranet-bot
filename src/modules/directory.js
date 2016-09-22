@@ -21,9 +21,10 @@ const Directory = () => {
     };
 
     const formatExternalPhone = phoneNumber => {
-        const spacedNumber = phoneNumber[2] === '7' ?
-            phoneNumber.match(/^(\d{2})(\d{4})(\d{3})(\d{3})$/) :
-            phoneNumber.match(/^(\d{2})(\d{3})(\d{3})(\d{4})$/);
+        const internationalisedNumber = phoneNumber[0] === '0' ? phoneNumber.replace('0', '44') : phoneNumber;
+        const spacedNumber = internationalisedNumber[2] === '7' ?
+            internationalisedNumber.match(/^(\d{2})(\d{4})(\d{3})(\d{3})$/) :
+            internationalisedNumber.match(/^(\d{2})(\d{3})(\d{3})(\d{4})$/);
         return `+${spacedNumber[1]} ${spacedNumber[2]} ${spacedNumber[3]} ${spacedNumber[4]}`;
     };
 
