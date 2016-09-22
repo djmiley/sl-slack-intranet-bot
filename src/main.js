@@ -31,11 +31,7 @@ const handleMessage = msg => {
     return action ? action(terms) : Promise.reject();
   }
 
-  if (words.length > 0) {
-    return action(words[0], words.slice(1));
-  } else {
-    return Promise.reject();
-  }
+  return action(words[0], words.slice(1));
 };
 
 rtm.on(CLIENT_EVENTS.RTM.AUTHENTICATED, data => {
