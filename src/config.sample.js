@@ -8,6 +8,8 @@ export const config = {
         limit: 10
     },
     activeDirectory: {
-
+        interval: 100000,
+        limit: 10,
+        voipservers: []
     }
 };
