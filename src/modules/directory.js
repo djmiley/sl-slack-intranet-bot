@@ -1,4 +1,8 @@
 import { config } from '../config';
+import templateGenerator from './directory/templateGenerator';
+import { alphabeticalSorter, formatRecords } from './directory/formatter';
+import { phoneIds, phones } from './directory/phones';
+import rooms from './directory/rooms';
 import fetch from 'node-fetch';
 
 const Directory = () => {
@@ -11,45 +15,73 @@ const Directory = () => {
 
         directory = [];
 
+        let i = 0;
+
         config.activeDirectory.voipservers.forEach(voipserver => {
             fetch(`http://${voipserver}/prov/cgi-bin/directory.cgi`, options)
                 .then(res => res.json())
-                .then(res => directory = [...directory, ...res]);
+                .then(res => {
+                    i++;
+                    directory = [...directory, ...res];
+                    if (i === config.activeDirectory.voipservers.length) {
+                        putToConfluence(directory);
+                    }
+                })
+                .catch(error => {
+                    console.log(error);
+                });
         });
-
-        setTimeout(fetchDirectory, config.activeDirectory.interval);
     };
 
-    const formatExternalPhone = phoneNumber => {
-        const internationalisedNumber = phoneNumber[0] === '0' ? phoneNumber.replace('0', '44') : phoneNumber;
-        const spacedNumber = internationalisedNumber[2] === '7' ?
-            internationalisedNumber.match(/^(\d{2})(\d{4})(\d{3})(\d{3})$/) :
-            internationalisedNumber.match(/^(\d{2})(\d{3})(\d{3})(\d{4})$/);
-        return `+${spacedNumber[1]} ${spacedNumber[2]} ${spacedNumber[3]} ${spacedNumber[4]}`;
+    const putToConfluence = (directory) => {
+        const options = {
+            method: 'GET',
+            headers: {
+                'Authorization': 'Basic ' + config.confluence.basicAuth
+            }
+        };
+
+        fetch('https://scottlogic.atlassian.net/wiki/rest/api/content/' + config.activeDirectory.pageID, options)
+            .then(res => res.json())
+            .then(res => formJsonAndPutContent(directory, res.version.number + 1))
+            .catch(error => console.log(error));
     };
 
-    const formatRecord = record => {
-        return (`:telephone_receiver:\t${record.name}, Ext: ${record.phoneI}`) +
-            (record.phoneE ? (`, DDI: ${formatExternalPhone(record.phoneE)}`) : (``));
-    };
+    const formJsonAndPutContent = (directory, versionNumber) => {
+        const filteredDirectory = directory.filter(record => !phoneIds.includes(record.username) && !record.name.includes('Spare'))
+        const mainNumbers = directory.filter(record => phoneIds.includes(record.username));
 
-    const formatRecords = records => {
-        return records.length <= 0 ? 
-            `I'm sorry, I can't find any phone user by that name.` :
-            (records.length === 1) ?
-            formatRecord(records[0]) :
-            (`*_Here are the ${records.length} most relevant records_*\n\n`).concat(records
-                .map(record => formatRecord(record))
-                .join('\n')
-            );
+        const json = {
+            id: config.activeDirectory.pageID,
+            type: 'page',
+            title: 'Phone Directory',
+            body: {
+                storage: {
+                    value: templateGenerator(filteredDirectory, phones(mainNumbers), rooms),
+                    representation: 'storage'
+                }
+            },
+            version: {
+                number: versionNumber
+            }
+        };
+
+        const options = {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': 'Basic ' + config.confluence.basicAuth
+            },
+            body: JSON.stringify(json)
+        };
+
+        fetch('https://scottlogic.atlassian.net/wiki/rest/api/content/' + config.activeDirectory.pageID, options)
+            .then(res => res.json())
+            .catch(error => console.log(error));
     };
 
     const filterRecord = (record, terms) => {
         return record.name.replace(/\s+/g, '').toUpperCase().includes(terms.join('').toUpperCase());
-    };
-
-    const alphabeticalSorter = (a, b) => {
-        return a.name < b.name ? -1 : (a.name > b.name) ? 1 : 0;
     };
 
     const search = terms => {
@@ -64,7 +96,7 @@ const Directory = () => {
         }
     };
 
-    fetchDirectory();
+    setTimeout(fetchDirectory, config.activeDirectory.interval);
 
     return {
         search

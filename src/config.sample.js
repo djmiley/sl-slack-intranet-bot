@@ -10,6 +10,7 @@ export const config = {
     activeDirectory: {
         interval: 100000,
         limit: 10,
+        pageID: null
         voipservers: []
     }
 };
