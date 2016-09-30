@@ -2,6 +2,19 @@ export const alphabeticalSorter = (a, b) => {
     return a.name < b.name ? -1 : (a.name > b.name) ? 1 : 0;
 };
 
+export const verticalColumnSort = columnLength => {
+    return (a, b) => {
+        console.log(a.index);
+        console.log(b.index);
+        // if (a.index >= columnLength * 3) {
+        //     return 0;
+        // }
+        return a.index % columnLength === b.index % columnLength ?
+            a.index - b.index :
+            a.index % columnLength - b.index % columnLength;
+    }
+}
+
 export const formatExternalPhone = phoneNumber => {
     if (!phoneNumber) {
         return ``;

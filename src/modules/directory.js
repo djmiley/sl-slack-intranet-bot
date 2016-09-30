@@ -96,7 +96,8 @@ const Directory = () => {
         }
     };
 
-    setTimeout(fetchDirectory, config.activeDirectory.interval);
+    // setTimeout(fetchDirectory, config.activeDirectory.interval);
+    fetchDirectory();
 
     return {
         search

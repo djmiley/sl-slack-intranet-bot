@@ -1,13 +1,14 @@
-import { alphabeticalSorter, formatExternalPhone } from './formatter';
+import { alphabeticalSorter, verticalColumnSort, formatExternalPhone } from './formatter';
 
 let directoryLength = 0;
+let columnLength = 0
 
 const formDirectoryRecord = (record, index) => {
     let directoryRecord = ``;
     if (index % 3 === 0) {
         directoryRecord += `<tr>`;
     }
-    directoryRecord += `<th>${record.name}</th><td>${record.phoneI}</td><td>${formatExternalPhone(record.phoneE)}</td>`;
+    directoryRecord += `<th>${record.index}</th><td>${record.index}</td><td>${formatExternalPhone(record.phoneE)}</td>`;
     if (index % 3 === 2 || index === directoryLength - 1) {
         directoryRecord += `</tr>`;
     }
@@ -18,6 +19,14 @@ const formDirectoryTable = directory => {
     let directoryRecords = '';
     directory
         .sort(alphabeticalSorter)
+        .map((record, index) => {
+            return {
+                index,
+                value: record
+            }
+        })
+        .sort(verticalColumnSort(columnLength))
+        // .map(record => record.value)
         .forEach((record, index) => directoryRecords += formDirectoryRecord(record, index));
 
     return [
@@ -94,6 +103,7 @@ const formRoomTable = rooms => {
 
 export default function(directory, phones, rooms) {
     directoryLength = directory.length;
+    columnLength = (directory.length - directory.length % 3) / 3 + 1;
 
     return [
         `<ac:layout>`,
