@@ -34,14 +34,7 @@ export const phones = directory => {
         'Projects'
     ];
 
-    const headers = [
-        'Office',
-        'Name',
-        'Ext.',
-        'DDI'
-    ];
-
-    const records = [
+    return [
         new Phone(offices[0], 5, { name: 'Main Line', phoneI: '', phoneE: '443331010020' }),
         new Phone(offices[0], 0, directory.find(record => record.username === '516')),
         new Phone(offices[0], 0, directory.find(record => record.username === '667')),
@@ -62,6 +55,4 @@ export const phones = directory => {
         new Phone(offices[4], 0, { name: 'Shinobi', phoneI: '', phoneE: '443331014500' }),
         new Phone(offices[4], 0, { name: 'Visiblox', phoneI: '', phoneE: '441316036326' })
     ];
-
-    return { headers, records };
 }

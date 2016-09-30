@@ -9,15 +9,7 @@ const offices = [
     'London'
 ];
 
-const headers = [
-    'Office',
-    'Ext.',
-    'DDI',
-    'User PIN',
-    'Admin PIN'
-];
-
-const records = [
+export default [
     new Room(offices[0], 4, '600', '441914060226', '004400', '006600'),
     new Room(offices[0], 0, '601', '', '114411', '116611'),
     new Room(offices[0], 0, '602', '', '224422', '226622'),
@@ -35,5 +27,3 @@ const records = [
     new Room(offices[3], 0, '827', '', '773377', '775577'),
     new Room(offices[3], 0, '828', '', '883388', '885588')
 ];
-
-export default { headers, records }

@@ -1,3 +1,4 @@
+import { config } from '../../config';
 import { alphabeticalSorter, formatExternalPhone } from './formatter';
 
 let directoryLength = 0;
@@ -49,12 +50,11 @@ const formPhoneRecord = (record, index) => {
 
 const formPhoneTable = phones => {
     let phoneTableRecords = '';
-    phones.records.forEach((record, index) => phoneTableRecords += formPhoneRecord(record, index));
-
+    phones.forEach((record, index) => phoneTableRecords += formPhoneRecord(record, index));
     return [
         `<table>`,
         `   <thead>`,
-        formTableHeaders(phones.headers),
+        formTableHeaders(config.activeDirectory.phoneHeaders),
         `   </thead>`,
         `   <tbody>`,
         phoneTableRecords,
@@ -78,12 +78,12 @@ const formRoomRecord = (record, index) => {
 
 const formRoomTable = rooms => {
     let roomTableRecords = '';
-    rooms.records.forEach((record, index) => roomTableRecords += formRoomRecord(record, index));
+    rooms.forEach((record, index) => roomTableRecords += formRoomRecord(record, index));
 
     return [
         `<table>`,
         `   <thead>`,
-        formTableHeaders(rooms.headers),
+        formTableHeaders(config.activeDirectory.roomHeaders),
         `   </thead>`,
         `   <tbody>`,
         roomTableRecords,
@@ -92,7 +92,7 @@ const formRoomTable = rooms => {
     ].join('');
 };
 
-export default function(directory, phones, rooms) {
+export default (directory, phones, rooms) => {
     directoryLength = directory.length;
 
     return [

@@ -8,9 +8,22 @@ export const config = {
         limit: 10
     },
     activeDirectory: {
-        interval: 100000,
+        interval: 86400000,
         limit: 10,
-        pageID: null
+        pageId: null,
+        phoneHeaders: [
+            'Office',
+            'Name',
+            'Ext.',
+            'DDI'
+        ],
+        roomHeaders: [
+            'Office',
+            'Ext.',
+            'DDI',
+            'User PIN',
+            'Admin PIN'
+        ],
         voipservers: []
     }
 };

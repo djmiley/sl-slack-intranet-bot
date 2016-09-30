@@ -31,6 +31,8 @@ const Directory = () => {
                     console.log(error);
                 });
         });
+
+        setTimeout(fetchDirectory, config.activeDirectory.interval);
     };
 
     const putToConfluence = (directory) => {
@@ -41,7 +43,7 @@ const Directory = () => {
             }
         };
 
-        fetch('https://scottlogic.atlassian.net/wiki/rest/api/content/' + config.activeDirectory.pageID, options)
+        fetch('https://scottlogic.atlassian.net/wiki/rest/api/content/' + config.activeDirectory.pageId, options)
             .then(res => res.json())
             .then(res => formJsonAndPutContent(directory, res.version.number + 1))
             .catch(error => console.log(error));
@@ -52,7 +54,7 @@ const Directory = () => {
         const mainNumbers = directory.filter(record => phoneIds.includes(record.username));
 
         const json = {
-            id: config.activeDirectory.pageID,
+            id: config.activeDirectory.pageId,
             type: 'page',
             title: 'Phone Directory',
             body: {
@@ -75,7 +77,7 @@ const Directory = () => {
             body: JSON.stringify(json)
         };
 
-        fetch('https://scottlogic.atlassian.net/wiki/rest/api/content/' + config.activeDirectory.pageID, options)
+        fetch('https://scottlogic.atlassian.net/wiki/rest/api/content/' + config.activeDirectory.pageId, options)
             .then(res => res.json())
             .catch(error => console.log(error));
     };
@@ -96,7 +98,7 @@ const Directory = () => {
         }
     };
 
-    setTimeout(fetchDirectory, config.activeDirectory.interval);
+    fetchDirectory();
 
     return {
         search
